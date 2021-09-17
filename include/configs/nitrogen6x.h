@@ -11,6 +11,10 @@
 
 #include "mx6_common.h"
 
+#if defined(CONFIG_TARGET_NITROGEN6X)
+#define CONFIG_SYS_REDUNDAND_ENVIRONMENT
+#endif
+
 #define CONFIG_MACH_TYPE	3769
 
 /* Size of malloc() pool */

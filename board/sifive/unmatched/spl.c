@@ -10,17 +10,97 @@
 #include <spl.h>
 #include <misc.h>
 #include <log.h>
+#include <config.h>
+#include <i2c.h>
 #include <linux/delay.h>
 #include <linux/io.h>
 #include <asm/gpio.h>
 #include <asm/arch/gpio.h>
 #include <asm/arch/spl.h>
 
+#define UBRDG_RESET	SIFIVE_GENERIC_GPIO_NR(0, 7)
+#define ULPI_RESET	SIFIVE_GENERIC_GPIO_NR(0, 9)
+#define UHUB_RESET	SIFIVE_GENERIC_GPIO_NR(0, 11)
 #define GEM_PHY_RESET	SIFIVE_GENERIC_GPIO_NR(0, 12)
 
 #define MODE_SELECT_REG		0x1000
 #define MODE_SELECT_SD		0xb
 #define MODE_SELECT_MASK	GENMASK(3, 0)
+
+#define TMP451_REMOTE_THERM_LIMIT_REG_OFFSET	0x19
+#define TMP451_RETMOE_THERM_LIMIT_INIT_VALUE	0x55
+
+static inline int init_tmp451_remote_therm_limit(void)
+{
+	struct udevice *dev;
+	unsigned char r_therm_limit = TMP451_RETMOE_THERM_LIMIT_INIT_VALUE;
+	int ret;
+
+	ret = i2c_get_chip_for_busnum(CONFIG_SYS_TMP451_BUS_NUM,
+				      CONFIG_SYS_I2C_TMP451_ADDR,
+				      CONFIG_SYS_I2C_TMP451_ADDR_LEN,
+				      &dev);
+
+	if (!ret)
+		ret = dm_i2c_write(dev, TMP451_REMOTE_THERM_LIMIT_REG_OFFSET,
+				   &r_therm_limit,
+				   sizeof(unsigned char));
+	return ret;
+}
+
+static inline int spl_reset_device_by_gpio(const char *label, int pin, int low_width)
+{
+	int ret;
+
+	ret = gpio_request(pin, label);
+	if (ret) {
+		debug("%s gpio request failed: %d\n", label, ret);
+		return ret;
+	}
+
+	ret = gpio_direction_output(pin, 1);
+	if (ret) {
+		debug("%s gpio direction set failed: %d\n", label, ret);
+		return ret;
+	}
+
+	udelay(1);
+
+	gpio_set_value(pin, 0);
+	udelay(low_width);
+	gpio_set_value(pin, 1);
+
+	return ret;
+}
+
+static inline int spl_gemgxl_init(void)
+{
+	int ret;
+	/*
+	 * GEMGXL init VSC8541 PHY reset sequence;
+	 * leave pull-down active for 2ms
+	 */
+	udelay(2000);
+	ret = spl_reset_device_by_gpio("gem_phy_reset", GEM_PHY_RESET, 1);
+	mdelay(15);
+
+	return ret;
+}
+
+static inline int spl_usb_pcie_bridge_init(void)
+{
+	return spl_reset_device_by_gpio("usb_pcie_bridge_reset", UBRDG_RESET, 3000);
+}
+
+static inline int spl_usb_hub_init(void)
+{
+	return spl_reset_device_by_gpio("usb_hub_reset", UHUB_RESET, 100);
+}
+
+static inline int spl_ulpi_init(void)
+{
+	return spl_reset_device_by_gpio("ulpi_reset", ULPI_RESET, 1);
+}
 
 int spl_board_init_f(void)
 {
@@ -29,36 +109,43 @@ int spl_board_init_f(void)
 	ret = spl_soc_init();
 	if (ret) {
 		debug("HiFive Unmatched FU740 SPL init failed: %d\n", ret);
-		return ret;
+		goto end;
 	}
 
-	/*
-	 * GEMGXL init VSC8541 PHY reset sequence;
-	 * leave pull-down active for 2ms
-	 */
-	udelay(2000);
-	ret = gpio_request(GEM_PHY_RESET, "gem_phy_reset");
+	pwm_device_init();
+
+	ret = init_tmp451_remote_therm_limit();
 	if (ret) {
-		debug("gem_phy_reset gpio request failed: %d\n", ret);
-		return ret;
+		debug("TMP451 remote THERM limit init failed: %d\n", ret);
+		goto end;
 	}
 
-	/* Set GPIO 12 (PHY NRESET) */
-	ret = gpio_direction_output(GEM_PHY_RESET, 1);
+	ret = spl_gemgxl_init();
 	if (ret) {
-		debug("gem_phy_reset gpio direction set failed: %d\n", ret);
-		return ret;
+		debug("Gigabit ethernet PHY (VSC8541) init failed: %d\n", ret);
+		goto end;
 	}
 
-	udelay(1);
+	ret = spl_usb_pcie_bridge_init();
+	if (ret) {
+		debug("USB Bridge (ASM1042A) init failed: %d\n", ret);
+		goto end;
+	}
 
-	/* Reset PHY again to enter unmanaged mode */
-	gpio_set_value(GEM_PHY_RESET, 0);
-	udelay(1);
-	gpio_set_value(GEM_PHY_RESET, 1);
-	mdelay(15);
+	ret = spl_usb_hub_init();
+	if (ret) {
+		debug("USB Hub (ASM1074) init failed: %d\n", ret);
+		goto end;
+	}
 
-	return 0;
+	ret = spl_ulpi_init();
+	if (ret) {
+		debug("USB 2.0 PHY (USB3320C) init failed: %d\n", ret);
+		goto end;
+	}
+
+end:
+	return ret;
 }
 
 u32 spl_boot_device(void)

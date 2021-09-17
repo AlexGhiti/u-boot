@@ -12,7 +12,7 @@ setenv initrdaddr  "42000000"
 setenv loaddtb     "load mmc ${mmcbootdev}:${mmcbootpart} ${fdtaddr} ${fdtfile}"
 setenv loadinitrd  "load mmc ${mmcbootdev}:${mmcbootpart} ${initrdaddr} ${initrdname}"
 setenv loadkernel  "load mmc ${mmcbootdev}:${mmcbootpart} '${kerneladdr}' '${kernelname}'"
-setenv kernel_args "setenv bootargs ${console} root=/dev/mmcblk${mmcrootdev}p${mmcrootpart} rootfstype=${rootfstype} rootwait ${opts}"
+setenv kernel_args "setenv bootargs console=${console} root=/dev/mmcblk${mmcrootdev}p${mmcrootpart} rootfstype=${rootfstype} rootwait ${opts}"
 
 #### Routine: check_dtb - check that target.dtb exists on boot partition
 setenv check_dtb "

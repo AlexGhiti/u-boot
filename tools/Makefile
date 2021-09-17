@@ -52,7 +52,7 @@ HOSTCFLAGS_xway-swap-bytes.o := -pedantic
 hostprogs-y += mkenvimage
 mkenvimage-objs := mkenvimage.o os_support.o lib/crc32.o
 
-hostprogs-y += dumpimage mkimage
+hostprogs-y += dumpimage mkimage mksunxiboot kwboot
 hostprogs-$(CONFIG_FIT_SIGNATURE) += fit_info fit_check_sign
 
 hostprogs-$(CONFIG_CMD_BOOTEFI_SELFTEST) += file2include

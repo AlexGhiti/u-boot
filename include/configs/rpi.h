@@ -13,7 +13,7 @@
 #include <asm/arch/base.h>
 #endif
 
-#if defined(CONFIG_TARGET_RPI_2) || defined(CONFIG_TARGET_RPI_3_32B)
+#ifndef CONFIG_ARM64
 #define CONFIG_SKIP_LOWLEVEL_INIT
 #endif
 
@@ -93,6 +93,7 @@
 
 /* Console configuration */
 #define CONFIG_SYS_CBSIZE		1024
+#define CONFIG_SYS_MAXARGS		64
 
 /* Environment */
 #define CONFIG_SYS_LOAD_ADDR		0x1000000

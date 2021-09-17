@@ -395,6 +395,11 @@ static int kwb_load_rsa_key(const char *keydir, const char *name, RSA **p_rsa)
 	if (!keydir)
 		keydir = ".";
 
+	if (strchr(name, '/')) {
+		fprintf(stderr, "Invalid key name '%s': contains '/' \n", name);
+		return -EACCES;
+	}
+
 	snprintf(path, sizeof(path), "%s/%s.key", keydir, name);
 	f = fopen(path, "r");
 	if (!f) {

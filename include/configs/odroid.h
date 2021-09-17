@@ -144,7 +144,7 @@
 		"elif test -e mmc ${mmcbootdev} uImage; then; " \
 			"run boot_uimg;" \
 		"fi;\0" \
-	"console=console=ttySAC1,115200n8\0" \
+	"console=ttySAC1,115200n8\0" \
 	"mmcbootdev=0\0" \
 	"mmcbootpart=1\0" \
 	"mmcrootdev=0\0" \

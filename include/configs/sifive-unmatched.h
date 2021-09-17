@@ -62,6 +62,8 @@
 	"name=system,size=-,bootable,type=${type_guid_gpt_system};"
 
 #define CONFIG_EXTRA_ENV_SETTINGS \
+	"fdt_high=0xffffffffffffffff\0" \
+	"initrd_high=0xffffffffffffffff\0" \
 	"kernel_addr_r=0x84000000\0" \
 	"fdt_addr_r=0x88000000\0" \
 	"scriptaddr=0x88100000\0" \
@@ -73,11 +75,26 @@
 	"type_guid_gpt_loader2=" TYPE_GUID_LOADER2 "\0" \
 	"type_guid_gpt_system=" TYPE_GUID_SYSTEM "\0" \
 	"partitions=" PARTS_DEFAULT "\0" \
-	BOOTENV
+	"fdtfile=" CONFIG_DEFAULT_FDT_FILE "\0" \
+	"setled_blue=mw.l 0x10020024 0x0000ffff; mw.l 0x10020028 0x0000ffff; mw.l 0x1002002c 0x0\0" \
+	BOOTENV \
+	"boot_extlinux="                                                  			\
+		"run setled_blue; "								\
+		"sysboot ${devtype} ${devnum}:${distro_bootpart} any "    			\
+			"${scriptaddr} ${prefix}${boot_syslinux_conf};\0"
 
 #define CONFIG_PREBOOT \
 	"setenv fdt_addr ${fdtcontroladdr};" \
 	"fdt addr ${fdtcontroladdr};"
 #endif /* CONFIG_SPL_BUILD */
+
+#define CONFIG_SYS_EEPROM_BUS_NUM		0
+#define CONFIG_SYS_I2C_EEPROM_ADDR		0x54
+#define CONFIG_SYS_I2C_EEPROM_ADDR_LEN		0x1
+#define CONFIG_SYS_TMP451_BUS_NUM		0
+#define CONFIG_SYS_I2C_TMP451_ADDR		0x4c
+#define CONFIG_SYS_I2C_TMP451_ADDR_LEN		0x1
+
+#define CONFIG_ID_EEPROM
 
 #endif /* __SIFIVE_UNMATCHED_H */

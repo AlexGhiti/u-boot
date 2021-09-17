@@ -67,7 +67,12 @@ static int rsa_pem_get_pub_key(const char *keydir, const char *name, EVP_PKEY **
 	if (!evpp)
 		return -EINVAL;
 
-	*evpp = NULL;
+	if (strchr(name, '/')) {
+		fprintf(stderr, "Invalid key name '%s': contains '/' \n", name);
+		return -EACCES;
+	}
+
+	*evpp = NULL;	
 	snprintf(path, sizeof(path), "%s/%s.crt", keydir, name);
 	f = fopen(path, "r");
 	if (!f) {
@@ -199,6 +204,11 @@ static int rsa_pem_get_priv_key(const char *keydir, const char *name,
 	if (!evpp)
 		return -EINVAL;
 
+	if (strchr(name, '/')) {
+		fprintf(stderr, "Invalid key name '%s': contains '/' \n", name);
+		return -EACCES;
+	}
+	
 	*evpp = NULL;
 	if (keydir && name)
 		snprintf(path, sizeof(path), "%s/%s.key", keydir, name);
