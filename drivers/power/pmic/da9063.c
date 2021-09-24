@@ -10,6 +10,8 @@
 #include <dm.h>
 #include <i2c.h>
 #include <log.h>
+#include <sysreset.h>
+#include <dm/lists.h>
 #include <power/pmic.h>
 #include <power/regulator.h>
 #include <power/da9063_pmic.h>
@@ -85,8 +87,9 @@ static int da9063_read(struct udevice *dev, uint reg, uint8_t *buff, int len)
 
 static int da9063_bind(struct udevice *dev)
 {
-	ofnode regulators_node;
+	ofnode regulators_node, reset_node;
 	int children;
+	int ret;
 
 	regulators_node = dev_read_subnode(dev, "regulators");
 	if (!ofnode_valid(regulators_node)) {
@@ -100,6 +103,17 @@ static int da9063_bind(struct udevice *dev)
 	children = pmic_bind_children(dev, regulators_node, pmic_children_info);
 	if (!children)
 		debug("%s: %s - no child found\n", __func__, dev->name);
+
+	if (CONFIG_IS_ENABLED(SYSRESET)) {
+		reset_node = dev_read_subnode(dev, "reset");
+		if (ofnode_valid(reset_node)) {
+			ret = device_bind_driver(dev, DA9063_SYSRESET_DRIVER,
+						 DA9063_SYSRESET_DRIVER, NULL);
+			if (ret)
+				pr_err("%s: %s - failed to bind sysreset driver\n",
+				       __func__, dev->name);
+		}
+	}
 
 	/* Always return success for this device */
 	return 0;
@@ -128,4 +142,39 @@ U_BOOT_DRIVER(pmic_da9063) = {
 	.bind = da9063_bind,
 	.probe = da9063_probe,
 	.ops = &da9063_ops,
+};
+
+static int da9063_sysreset_request(struct udevice *dev, enum sysreset_t type)
+{
+	struct udevice *pmic_dev = dev->parent;
+	uint ret;
+
+	if (type != SYSRESET_WARM && type != SYSRESET_COLD)
+		return -EPROTONOSUPPORT;
+
+	ret = pmic_reg_write(pmic_dev, DA9063_REG_PAGE_CON, 0x00);
+	if (ret < 0)
+		return ret;
+
+	/* Sets the WAKE_UP bit */
+	ret = pmic_reg_write(pmic_dev, DA9063_REG_CONTROL_F, 0x04);
+	if (ret < 0)
+		return ret;
+
+	/* Powerdown! */
+	ret = pmic_reg_write(pmic_dev, DA9063_REG_CONTROL_A, 0x68);
+	if (ret < 0)
+		return ret;
+
+	return -EINPROGRESS;
+}
+
+static struct sysreset_ops da9063_sysreset_ops = {
+	.request = da9063_sysreset_request,
+};
+
+U_BOOT_DRIVER(da9063_sysreset) = {
+	.name = DA9063_SYSRESET_DRIVER,
+	.id = UCLASS_SYSRESET,
+	.ops = &da9063_sysreset_ops,
 };
