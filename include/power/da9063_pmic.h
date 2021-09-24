@@ -304,6 +304,7 @@
 /* Drivers name */
 #define DA9063_LDO_DRIVER	"da9063_ldo"
 #define DA9063_BUCK_DRIVER	"da9063_buck"
+#define DA9063_SYSRESET_DRIVER	"da9063_sysreset"
 
 /* Regulator modes */
 enum {
