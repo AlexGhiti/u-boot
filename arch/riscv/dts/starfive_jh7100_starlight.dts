@@ -2,6 +2,7 @@
 /* Copyright (c) 2021 StarFive Technology Co., Ltd. */
 
 /dts-v1/;
+#include "binman.dtsi"
 #include "starfive_jh7100_clk.dtsi"
 #include <dt-bindings/starfive_fb.h>
 #include <dt-bindings/gpio/gpio.h>

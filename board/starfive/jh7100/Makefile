@@ -3,5 +3,9 @@
 # Copyright (C) 2021 Shanghai StarFive Technology Co., Ltd.
 # TekkamanV <tekkamanv@starfivetech.com>
 
+ifdef CONFIG_SPL_BUILD
+obj-y	+= spl.o
+else
 obj-y	+= jh7100.o
 obj-y	+= jh_ptc.o
+endif
