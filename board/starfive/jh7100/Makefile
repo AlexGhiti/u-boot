@@ -5,7 +5,6 @@
 
 ifdef CONFIG_SPL_BUILD
 obj-y	+= spl.o
-else
+endif
 obj-y	+= jh7100.o
 obj-y	+= jh_ptc.o
-endif

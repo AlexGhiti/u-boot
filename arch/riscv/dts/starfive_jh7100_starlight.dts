@@ -130,6 +130,7 @@
 	};
 
 	soc {
+		u-boot,dm-spl;
 		#address-cells = <2>;
 		#size-cells = <2>;
 		#clock-cells = <1>;

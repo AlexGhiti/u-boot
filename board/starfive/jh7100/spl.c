@@ -84,6 +84,8 @@ int spl_board_init_f(void)
 	int ret = 0;
 
 	debug("ALEX!\n");
+	board_hw_init();
+	board_init();
 	//ret = spl_soc_init();
 	//if (ret) {
 	//	debug("HiFive Unmatched FU740 SPL init failed: %d\n", ret);
