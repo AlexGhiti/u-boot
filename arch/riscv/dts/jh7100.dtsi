@@ -12,9 +12,11 @@
 	compatible = "starfive,jh7100";
 
 	cpus {
+		u-boot,dm-spl;
 		#address-cells = <1>;
 		#size-cells = <0>;
 		cpu@0 {
+			u-boot,dm-spl;
 			compatible = "sifive,u74-mc", "riscv";
 			d-cache-block-size = <64>;
 			d-cache-sets = <64>;
@@ -35,6 +37,7 @@
 			status = "okay";
 			tlb-split;
 			cpu0_intc: interrupt-controller {
+				u-boot,dm-spl;
 				#interrupt-cells = <1>;
 				compatible = "riscv,cpu-intc";
 				interrupt-controller;
@@ -42,6 +45,7 @@
 		};
 
 		cpu@1 {
+			u-boot,dm-spl;
 			compatible = "sifive,u74-mc", "riscv";
 			d-cache-block-size = <64>;
 			d-cache-sets = <64>;
@@ -62,6 +66,7 @@
 			status = "okay";
 			tlb-split;
 			cpu1_intc: interrupt-controller {
+				u-boot,dm-spl;
 				#interrupt-cells = <1>;
 				compatible = "riscv,cpu-intc";
 				interrupt-controller;
@@ -70,6 +75,7 @@
 	};
 
 	osc_sys: osc_sys {
+		u-boot,dm-spl;
 		compatible = "fixed-clock";
 		#clock-cells = <0>;
 		/* This value must be overridden by the board */
@@ -77,6 +83,7 @@
 	};
 
 	osc_aud: osc_aud {
+		u-boot,dm-spl;
 		compatible = "fixed-clock";
 		#clock-cells = <0>;
 		/* This value must be overridden by the board */
@@ -84,6 +91,7 @@
 	};
 
 	soc {
+		u-boot,dm-spl;
 		compatible = "simple-bus";
 		interrupt-parent = <&plic>;
 		#address-cells = <2>;
@@ -91,6 +99,7 @@
 		ranges;
 
 		ccache: cache-controller@2010000 {
+			u-boot,dm-spl;
 			cache-block-size = <64>;
 			cache-line-size = <64>;
 			cache-level = <2>;
@@ -108,24 +117,28 @@
 		};
 
 		dtim: dtim@1000000 {
+			u-boot,dm-spl;
 			compatible = "starfive,dtim0";
 			reg = <0x0 0x1000000 0x0 0x2000>;
 			reg-names = "mem";
 		};
 
 		itim0: itim@1808000 {
+			u-boot,dm-spl;
 			compatible = "starfive,itim0";
 			reg = <0x0 0x1808000 0x0 0x8000>;
 			reg-names = "mem";
 		};
 
 		itim1: itim@1820000 {
+			u-boot,dm-spl;
 			compatible = "starfive,itim0";
 			reg = <0x0 0x1820000 0x0 0x8000>;
 			reg-names = "mem";
 		};
 
 		clint: clint@2000000 {
+			       u-boot,dm-spl;
 			#interrupt-cells = <1>;
 			compatible = "riscv,clint0";
 			interrupts-extended = <&cpu0_intc 3>,
@@ -137,6 +150,7 @@
 		};
 
 		plic: interrupt-controller@c000000 {
+			u-boot,dm-spl;
 			#interrupt-cells = <1>;
 			compatible = "riscv,plic0";
 			interrupt-controller;
@@ -151,6 +165,7 @@
 		};
 
 		clkgen: clock-controller@11800000 {
+		u-boot,dm-spl;
 			compatible = "starfive,jh7100-clkgen";
 			reg = <0x0 0x11800000 0x0 0x10000>;
 			clocks = <&osc_sys>, <&osc_aud>;
@@ -502,6 +517,7 @@
 		};
 
 		sdio0: mmc@10000000 {
+			       u-boot,dm-spl;
 			compatible = "snps,dw-mshc";
 			reg = <0x0 0x10000000 0x0 0x10000>;
 			interrupts = <4>;

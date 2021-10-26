@@ -83,7 +83,7 @@ int starfive_jh_dwmmc_getcd(struct udevice *dev)
 	struct dwmci_host *host = &priv->host;
 
 	u32 ret = dwmci_readl(host, DWMCI_CDETECT);
-#if CONFIG_IS_ENABLED(TARGET_STARFIVE_JH7100)
+#ifdef CONFIG_TARGET_STARFIVE_JH7100
 	printf("MMC CD is 0x%x, force to True.\n", ret);
 	return 1;
 #else

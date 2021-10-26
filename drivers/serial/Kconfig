@@ -407,6 +407,14 @@ config DEBUG_UART_SIFIVE
 	  will need to provide parameters to make this work. The driver will
 	  be available until the real driver-model serial is running.
 
+config DEBUG_UART_STARFIVE
+	bool "StarFive UART"
+	depends on STARFIVE_SERIAL
+	help
+	  Select this to enable a debug UART using the serial_sifive driver. You
+	  will need to provide parameters to make this work. The driver will
+	  be available until the real driver-model serial is running.
+
 config DEBUG_UART_STM32
 	bool "STMicroelectronics STM32"
 	depends on STM32_SERIAL

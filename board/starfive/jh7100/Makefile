@@ -3,6 +3,7 @@
 # Copyright (C) 2021 Shanghai StarFive Technology Co., Ltd.
 # Micheal Zhu <michael.zhu@starfivetech.com>
 
+obj-$(CONFIG_SPL_BUILD)	+= spl.o
 obj-y	+= jh7100.o
 obj-y	+= jh_ptc.o
 

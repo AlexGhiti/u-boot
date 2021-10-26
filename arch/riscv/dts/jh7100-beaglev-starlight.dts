@@ -7,6 +7,7 @@
 #include <dt-bindings/leds/common.h>
 #include <dt-bindings/pinctrl/pinctrl-starfive.h>
 #include <dt-bindings/starfive_fb.h>
+#include "binman.dtsi"
 
 / {
 	model = "BeagleV Starlight Beta";
@@ -24,6 +25,7 @@
 	};
 
 	cpus {
+		u-boot,dm-spl;
 		timebase-frequency = <6250000>;
 	};
 
@@ -93,6 +95,7 @@
 };
 
 &gpio {
+	u-boot,dm-spl;
 	/* don't reset gpio mux for serial console on uart3 */
 	starfive,keep-gpiomux = <13 14 0 2 3 45>;
 
@@ -232,7 +235,9 @@
 	};
 
 	sdio0_pins: sdio0-0 {
+		u-boot,dm-spl;
 		clk-pins {
+			u-boot,dm-spl;
 			pinmux = <GPIOMUX(54, GPO_SDIO0_PAD_CCLK_OUT,
 				  GPO_ENABLE, GPI_NONE)>;
 			bias-disable;
@@ -240,6 +245,7 @@
 			input-schmitt-disable;
 		};
 		sdio-pins {
+			u-boot,dm-spl;
 			pinmux = <GPIOMUX(55, GPO_LOW, GPO_DISABLE,
 				  GPI_SDIO0_PAD_CARD_DETECT_N)>,
 				 <GPIOMUX(53,
@@ -358,6 +364,7 @@
 	};
 
 	uart3_pins: uart3-0 {
+		u-boot,dm-spl;
 		rx-pins {
 			pinmux = <GPIOMUX(13, GPO_LOW, GPO_DISABLE,
 				  GPI_UART3_PAD_SIN)>;
@@ -711,6 +718,7 @@
 };
 
 &sdio0 {
+	u-boot,dm-spl;
 	broken-cd;
 	bus-width = <4>;
 	cap-sd-highspeed;
@@ -990,6 +998,7 @@
 };
 
 &uart3 {
+	u-boot,dm-spl;
 	pinctrl-names = "default";
 	pinctrl-0 = <&uart3_pins>;
 	status = "okay";
