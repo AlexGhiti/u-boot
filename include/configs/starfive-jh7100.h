@@ -54,11 +54,15 @@
 
 #include <environment/distro/sf.h>
 
-#define STARLIGHT_FEDORA_BOOTENV \
-	"bootdir=/boot\0" \
-	"bootenv=uEnv.txt\0" \
-	"mmcdev=0\0" \
-	"mmcpart=3\0"
+#ifndef CONFIG_SPL_BUILD
+#define TYPE_GUID_LOADER1	"5B193300-FC78-40CD-8002-E86C45580B47"
+#define TYPE_GUID_LOADER2	"2E54B353-1271-4842-806F-E436D6AF6985"
+#define TYPE_GUID_SYSTEM	"0FC63DAF-8483-4772-8E79-3D69D8477DE4"
+
+#define PARTS_DEFAULT \
+	"name=loader1,start=17K,size=1M,type=${type_guid_gpt_loader1};" \
+	"name=loader2,size=4MB,type=${type_guid_gpt_loader2};" \
+	"name=system,size=-,bootable,type=${type_guid_gpt_system};"
 
 #define STARLIGHT_TEST_BOOTENV \
 	"testpart=0:1\0" \
@@ -69,26 +73,29 @@
 		"env import -t ${loadaddr} ${filesize}\0"
 
 #define CONFIG_EXTRA_ENV_SETTINGS \
-	STARLIGHT_FEDORA_BOOTENV \
-	"loadaddr=0xa0000000\0" \
-	STARLIGHT_TEST_BOOTENV \
-	"loadbootenv=fatload mmc ${mmcdev} ${loadaddr} ${bootenv}\0" \
-	"ext4bootenv=ext4load mmc ${bootpart} ${loadaddr} ${bootdir}/${bootenv}\0" \
-	"importbootenv=echo Importing environment from mmc${mmcdev} ...; " \
-		"env import -t ${loadaddr} ${filesize}\0" \
-	"mmcbootenv=setenv bootpart ${mmcdev}:${mmcpart}; " \
-		"mmc dev ${mmcdev}; " \
-		"if mmc rescan; then " \
-			"run loadbootenv && run importbootenv; " \
-			"run ext4bootenv && run importbootenv; " \
-			"if test -n $uenvcmd; then " \
-				"echo Running uenvcmd ...; " \
-				"run uenvcmd; " \
-			"fi; " \
-		"fi\0" \
+	"fdt_high=0xffffffffffffffff\0" \
+	"initrd_high=0xffffffffffffffff\0" \
+	"kernel_addr_r=0x84000000\0" \
+	"fdt_addr_r=0x88000000\0" \
+	"scriptaddr=0x88100000\0" \
+	"pxefile_addr_r=0x88200000\0" \
+	"ramdisk_addr_r=0x88300000\0" \
+	"kernel_comp_addr_r=0x90000000\0" \
+	"kernel_comp_size=0x4000000\0" \
+	"type_guid_gpt_loader1=" TYPE_GUID_LOADER1 "\0" \
+	"type_guid_gpt_loader2=" TYPE_GUID_LOADER2 "\0" \
+	"type_guid_gpt_system=" TYPE_GUID_SYSTEM "\0" \
+	"partitions=" PARTS_DEFAULT "\0" \
 	"fdtfile=" CONFIG_DEFAULT_FDT_FILE "\0" \
-	BOOTENV \
-	BOOTENV_SF
+	BOOTENV	\
+	"boot_extlinux="						\
+		"sysboot ${devtype} ${devnum}:${distro_bootpart} any "	\
+                "${scriptaddr} ${prefix}${boot_syslinux_conf};\0"
+
+#define CONFIG_PREBOOT \
+	"setenv fdt_addr ${fdtcontroladdr};" \
+	"fdt addr ${fdtcontroladdr};"
+#endif
 
 #define CONFIG_SYS_MAX_FLASH_SECT	0
 #define CONFIG_SYS_MAX_FLASH_BANKS	0
