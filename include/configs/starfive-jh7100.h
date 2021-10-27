@@ -62,8 +62,7 @@
 #endif
 
 /* HACK these should have '#if defined (stuff) around them like zynqp*/
-#define BOOT_TARGET_DEVICES(func)	func(DHCP, dhcp, na) \
-					func(MMC, mmc, 0)
+#define BOOT_TARGET_DEVICES(func)	func(MMC, mmc, 0)
 
 #include <config_distro_bootcmd.h>
 
