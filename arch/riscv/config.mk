@@ -32,3 +32,13 @@ LDFLAGS_u-boot		+= --gc-sections -static -pie
 
 EFI_CRT0		:= crt0_riscv_efi.o
 EFI_RELOC		:= reloc_riscv_efi.o
+
+ifdef CONFIG_TARGET_STARFIVE_JH7100
+quiet_cmd_spl_dtb_bin_out = BIN_OUT $@
+      cmd_spl_dtb_bin_out = perl -e 'print pack("l", (stat @ARGV[0])[7])' $< > $@ && cat $< >> $@
+
+$(obj)/u-boot-spl-dtb.bin.out: $(obj)/u-boot-spl-dtb.bin
+	$(call cmd,spl_dtb_bin_out)
+
+INPUTS-$(CONFIG_SPL_BUILD) += $(obj)/u-boot-spl-dtb.bin.out
+endif
