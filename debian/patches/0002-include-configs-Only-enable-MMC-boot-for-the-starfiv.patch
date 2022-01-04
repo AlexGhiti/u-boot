@@ -1,0 +1,35 @@
+From 1aa26de32090f36ebe72e525a0982cca5665ffec Mon Sep 17 00:00:00 2001
+From: Alexandre Ghiti <alexandre.ghiti@canonical.com>
+Date: Wed, 27 Oct 2021 14:45:17 +0200
+Subject: [PATCH 2/5] include: configs: Only enable MMC boot for the starfive
+ JH7100
+
+The PHY fails to initialize with the following message:
+
+dwmac.10020000 Waiting for PHY auto negotiation to complete......... TIMEOUT !
+Could not initialize PHY dwmac.10020000
+
+So disable DHCP boot for now.
+
+Signed-off-by: Alexandre Ghiti <alexandre.ghiti@canonical.com>
+---
+ include/configs/starfive-jh7100.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/include/configs/starfive-jh7100.h b/include/configs/starfive-jh7100.h
+index 043b61da7a..51d45783b3 100644
+--- a/include/configs/starfive-jh7100.h
++++ b/include/configs/starfive-jh7100.h
+@@ -62,8 +62,7 @@
+ #endif
+ 
+ /* HACK these should have '#if defined (stuff) around them like zynqp*/
+-#define BOOT_TARGET_DEVICES(func)	func(DHCP, dhcp, na) \
+-					func(MMC, mmc, 0)
++#define BOOT_TARGET_DEVICES(func)	func(MMC, mmc, 0)
+ 
+ #include <config_distro_bootcmd.h>
+ 
+-- 
+2.32.0
+

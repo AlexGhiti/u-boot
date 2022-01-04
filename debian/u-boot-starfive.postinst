@@ -1,0 +1,19 @@
+#!/bin/sh
+
+##DEBHELPER##
+
+set -e
+
+case "$1" in
+    configure)
+        target=""
+        if grep -q '^BeagleV Starlight Beta' /sys/firmware/devicetree/base/model; then
+            target="starfive_beaglev"
+        fi
+        if [ -n "$target" ] && [ -e /dev/disk/by-partlabel/loader2 ]; then
+            dd if=/usr/lib/u-boot/$target/u-boot.itb of=/dev/disk/by-partlabel/loader2
+        fi
+        ;;
+esac
+
+exit 0

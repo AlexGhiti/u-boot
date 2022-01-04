@@ -1,0 +1,5 @@
+0001-u-boot-Port-SPL-to-Starfive-BeagleV-board.patch
+0002-include-configs-Only-enable-MMC-boot-for-the-starfiv.patch
+0003-include-configs-Use-SiFive-Unmatched-board-ennvironm.patch
+0004-configs-Rename-BeagleV-config-to-starfive_beaglev_de.patch
+0005-riscv-Add-target-to-create-SPL-binary-for-BeagleV.patch

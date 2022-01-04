@@ -1,0 +1,29 @@
+Source: u-boot-starfive
+Section: misc
+Priority: optional
+Maintainer: Alexandre Ghiti <alexandre.ghiti@canonical.com>
+Build-Depends: debhelper-compat (= 13),
+ bison,
+ device-tree-compiler,
+ flex,
+ gcc-riscv64-linux-gnu,
+ libssl-dev,
+ libpython3.9-dev,
+ opensbi,
+ python3,
+ python3-distutils,
+ python3-pkg-resources,
+ swig
+Standards-Version: 4.5.1
+Homepage: https://github.com/alexghiti/u-boot.git
+Vcs-Browser: https://github.com/alexghiti/u-boot
+Vcs-Git: https://github.com/alexghiti/u-boot.git
+Rules-Requires-Root: no
+
+Package: u-boot-starfive
+Architecture: all
+Multi-Arch: foreign
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: U-Boot for Starfive boards
+ U-boot support for the following boards that use Starfive SoC:
+  - BeagleV
