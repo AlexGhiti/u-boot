@@ -1,0 +1,7 @@
+u-boot-starfive (2021.10-starlight-ge77cc7b-0ubuntu1) jammy; urgency=medium
+
+  * Initial support for StarFive BeagleV board:
+    - u-boot SPL
+    - u-boot proper using openSBI fw_dynamic.bin
+
+ -- Alexandre Ghiti <alexandre.ghiti@canonical.com>  Tue, 04 Jan 2022 11:39:52 +0100

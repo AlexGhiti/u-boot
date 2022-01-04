@@ -1,0 +1,564 @@
+From 04fcd621f90b0551f01ed52a0939da6608edc4d5 Mon Sep 17 00:00:00 2001
+From: Alexandre Ghiti <alexandre.ghiti@canonical.com>
+Date: Tue, 26 Oct 2021 14:50:48 +0200
+Subject: [PATCH 1/5] u-boot: Port SPL to Starfive BeagleV board
+
+It expects:
+
+- to be loaded at 0x9000_0000 by the previous boot stage
+- to load openSBI fw_dynamic + u-boot proper in a FIT image
+
+Signed-off-by: Alexandre Ghiti <alexandre.ghiti@canonical.com>
+---
+ arch/riscv/dts/jh7100-beaglev-starlight.dts   |  9 +++++
+ arch/riscv/dts/jh7100.dtsi                    | 16 ++++++++
+ arch/riscv/dts/starfive_jh7100_clk.dtsi       | 10 +++++
+ arch/riscv/dts/starfive_jh7100_starlight.dts  |  2 +
+ arch/riscv/include/asm/arch-jh7100/gpio.h     | 38 ++++++++++++++++++
+ arch/riscv/include/asm/arch-jh7100/spl.h      | 14 +++++++
+ board/starfive/jh7100/Kconfig                 |  4 +-
+ board/starfive/jh7100/Makefile                |  1 +
+ board/starfive/jh7100/spl.c                   | 40 +++++++++++++++++++
+ .../starfive_jh7100_starlight_smode_defconfig | 16 ++++++++
+ drivers/mmc/starfive_jh_dw_mmc.c              |  2 +-
+ drivers/serial/Kconfig                        |  8 ++++
+ include/configs/starfive-jh7100.h             | 14 +++++++
+ 13 files changed, 172 insertions(+), 2 deletions(-)
+ create mode 100644 arch/riscv/include/asm/arch-jh7100/gpio.h
+ create mode 100644 arch/riscv/include/asm/arch-jh7100/spl.h
+ create mode 100644 board/starfive/jh7100/spl.c
+
+diff --git a/arch/riscv/dts/jh7100-beaglev-starlight.dts b/arch/riscv/dts/jh7100-beaglev-starlight.dts
+index bc1ba46d0b..2e12fd9451 100644
+--- a/arch/riscv/dts/jh7100-beaglev-starlight.dts
++++ b/arch/riscv/dts/jh7100-beaglev-starlight.dts
+@@ -7,6 +7,7 @@
+ #include <dt-bindings/leds/common.h>
+ #include <dt-bindings/pinctrl/pinctrl-starfive.h>
+ #include <dt-bindings/starfive_fb.h>
++#include "binman.dtsi"
+ 
+ / {
+ 	model = "BeagleV Starlight Beta";
+@@ -24,6 +25,7 @@
+ 	};
+ 
+ 	cpus {
++		u-boot,dm-spl;
+ 		timebase-frequency = <6250000>;
+ 	};
+ 
+@@ -93,6 +95,7 @@
+ };
+ 
+ &gpio {
++	u-boot,dm-spl;
+ 	/* don't reset gpio mux for serial console on uart3 */
+ 	starfive,keep-gpiomux = <13 14 0 2 3 45>;
+ 
+@@ -232,7 +235,9 @@
+ 	};
+ 
+ 	sdio0_pins: sdio0-0 {
++		u-boot,dm-spl;
+ 		clk-pins {
++			u-boot,dm-spl;
+ 			pinmux = <GPIOMUX(54, GPO_SDIO0_PAD_CCLK_OUT,
+ 				  GPO_ENABLE, GPI_NONE)>;
+ 			bias-disable;
+@@ -240,6 +245,7 @@
+ 			input-schmitt-disable;
+ 		};
+ 		sdio-pins {
++			u-boot,dm-spl;
+ 			pinmux = <GPIOMUX(55, GPO_LOW, GPO_DISABLE,
+ 				  GPI_SDIO0_PAD_CARD_DETECT_N)>,
+ 				 <GPIOMUX(53,
+@@ -358,6 +364,7 @@
+ 	};
+ 
+ 	uart3_pins: uart3-0 {
++		u-boot,dm-spl;
+ 		rx-pins {
+ 			pinmux = <GPIOMUX(13, GPO_LOW, GPO_DISABLE,
+ 				  GPI_UART3_PAD_SIN)>;
+@@ -711,6 +718,7 @@
+ };
+ 
+ &sdio0 {
++	u-boot,dm-spl;
+ 	broken-cd;
+ 	bus-width = <4>;
+ 	cap-sd-highspeed;
+@@ -990,6 +998,7 @@
+ };
+ 
+ &uart3 {
++	u-boot,dm-spl;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart3_pins>;
+ 	status = "okay";
+diff --git a/arch/riscv/dts/jh7100.dtsi b/arch/riscv/dts/jh7100.dtsi
+index 953b35e099..f05726d632 100644
+--- a/arch/riscv/dts/jh7100.dtsi
++++ b/arch/riscv/dts/jh7100.dtsi
+@@ -12,9 +12,11 @@
+ 	compatible = "starfive,jh7100";
+ 
+ 	cpus {
++		u-boot,dm-spl;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 		cpu@0 {
++			u-boot,dm-spl;
+ 			compatible = "sifive,u74-mc", "riscv";
+ 			d-cache-block-size = <64>;
+ 			d-cache-sets = <64>;
+@@ -35,6 +37,7 @@
+ 			status = "okay";
+ 			tlb-split;
+ 			cpu0_intc: interrupt-controller {
++				u-boot,dm-spl;
+ 				#interrupt-cells = <1>;
+ 				compatible = "riscv,cpu-intc";
+ 				interrupt-controller;
+@@ -42,6 +45,7 @@
+ 		};
+ 
+ 		cpu@1 {
++			u-boot,dm-spl;
+ 			compatible = "sifive,u74-mc", "riscv";
+ 			d-cache-block-size = <64>;
+ 			d-cache-sets = <64>;
+@@ -62,6 +66,7 @@
+ 			status = "okay";
+ 			tlb-split;
+ 			cpu1_intc: interrupt-controller {
++				u-boot,dm-spl;
+ 				#interrupt-cells = <1>;
+ 				compatible = "riscv,cpu-intc";
+ 				interrupt-controller;
+@@ -70,6 +75,7 @@
+ 	};
+ 
+ 	osc_sys: osc_sys {
++		u-boot,dm-spl;
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		/* This value must be overridden by the board */
+@@ -77,6 +83,7 @@
+ 	};
+ 
+ 	osc_aud: osc_aud {
++		u-boot,dm-spl;
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		/* This value must be overridden by the board */
+@@ -84,6 +91,7 @@
+ 	};
+ 
+ 	soc {
++		u-boot,dm-spl;
+ 		compatible = "simple-bus";
+ 		interrupt-parent = <&plic>;
+ 		#address-cells = <2>;
+@@ -91,6 +99,7 @@
+ 		ranges;
+ 
+ 		ccache: cache-controller@2010000 {
++			u-boot,dm-spl;
+ 			cache-block-size = <64>;
+ 			cache-line-size = <64>;
+ 			cache-level = <2>;
+@@ -108,24 +117,28 @@
+ 		};
+ 
+ 		dtim: dtim@1000000 {
++			u-boot,dm-spl;
+ 			compatible = "starfive,dtim0";
+ 			reg = <0x0 0x1000000 0x0 0x2000>;
+ 			reg-names = "mem";
+ 		};
+ 
+ 		itim0: itim@1808000 {
++			u-boot,dm-spl;
+ 			compatible = "starfive,itim0";
+ 			reg = <0x0 0x1808000 0x0 0x8000>;
+ 			reg-names = "mem";
+ 		};
+ 
+ 		itim1: itim@1820000 {
++			u-boot,dm-spl;
+ 			compatible = "starfive,itim0";
+ 			reg = <0x0 0x1820000 0x0 0x8000>;
+ 			reg-names = "mem";
+ 		};
+ 
+ 		clint: clint@2000000 {
++			       u-boot,dm-spl;
+ 			#interrupt-cells = <1>;
+ 			compatible = "riscv,clint0";
+ 			interrupts-extended = <&cpu0_intc 3>,
+@@ -137,6 +150,7 @@
+ 		};
+ 
+ 		plic: interrupt-controller@c000000 {
++			u-boot,dm-spl;
+ 			#interrupt-cells = <1>;
+ 			compatible = "riscv,plic0";
+ 			interrupt-controller;
+@@ -151,6 +165,7 @@
+ 		};
+ 
+ 		clkgen: clock-controller@11800000 {
++		u-boot,dm-spl;
+ 			compatible = "starfive,jh7100-clkgen";
+ 			reg = <0x0 0x11800000 0x0 0x10000>;
+ 			clocks = <&osc_sys>, <&osc_aud>;
+@@ -502,6 +517,7 @@
+ 		};
+ 
+ 		sdio0: mmc@10000000 {
++			       u-boot,dm-spl;
+ 			compatible = "snps,dw-mshc";
+ 			reg = <0x0 0x10000000 0x0 0x10000>;
+ 			interrupts = <4>;
+diff --git a/arch/riscv/dts/starfive_jh7100_clk.dtsi b/arch/riscv/dts/starfive_jh7100_clk.dtsi
+index 31ada32b9b..4063bcc2e3 100644
+--- a/arch/riscv/dts/starfive_jh7100_clk.dtsi
++++ b/arch/riscv/dts/starfive_jh7100_clk.dtsi
+@@ -3,12 +3,14 @@
+ 
+ / {
+ 	hfclk: hfclk {
++		u-boot,dm-spl;
+ 		#clock-cells = <0>;
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <25000000>;
+ 		clock-output-names = "hfclk";
+ 	};
+ 	rtcclk: rtcclk {
++		u-boot,dm-spl;
+ 		#clock-cells = <0>;
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <6250000>;
+@@ -29,6 +31,7 @@
+ 	};
+ 
+ 	axiclk: axiclk {
++		u-boot,dm-spl;
+ 		#clock-cells = <0>;
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <500000000>;
+@@ -36,21 +39,25 @@
+ 	};
+ 
+ 	ahb0clk: ahb0clk {
++		u-boot,dm-spl;
+ 		#clock-cells = <0>;
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <250000000>;
+ 	};
+ 	ahb2clk: ahb2clk {
++		u-boot,dm-spl;
+ 		#clock-cells = <0>;
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <125000000>;
+ 	};
+ 	apb1clk: apb1clk {
++		u-boot,dm-spl;
+ 		#clock-cells = <0>;
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <125000000>;
+ 	};
+ 	apb2clk: apb2clk {
++		u-boot,dm-spl;
+ 		#clock-cells = <0>;
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <125000000>;
+@@ -86,6 +93,7 @@
+ 		clock-frequency = <74250000>;
+ 	};
+ 	dwmmc_biuclk: dwmmc_biuclk {
++		u-boot,dm-spl;
+ 		#clock-cells = <0>;
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <100000000>;
+@@ -120,11 +128,13 @@
+ 		clock-frequency = <24000000>;
+ 	};
+ 	byteclock: byteclock {
++		u-boot,dm-spl;
+ 		#clock-cells = <0>;
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <24000000>;
+ 	};
+ 	coreclock: coreclock {
++		u-boot,dm-spl;
+ 		#clock-cells = <0>;
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <24000000>;
+diff --git a/arch/riscv/dts/starfive_jh7100_starlight.dts b/arch/riscv/dts/starfive_jh7100_starlight.dts
+index 837e40f12f..8729db1850 100644
+--- a/arch/riscv/dts/starfive_jh7100_starlight.dts
++++ b/arch/riscv/dts/starfive_jh7100_starlight.dts
+@@ -2,6 +2,7 @@
+ /* Copyright (c) 2021 StarFive Technology Co., Ltd. */
+ 
+ /dts-v1/;
++#include "binman.dtsi"
+ #include "starfive_jh7100_clk.dtsi"
+ #include <dt-bindings/starfive_fb.h>
+ #include <dt-bindings/gpio/gpio.h>
+@@ -129,6 +130,7 @@
+ 	};
+ 
+ 	soc {
++		u-boot,dm-spl;
+ 		#address-cells = <2>;
+ 		#size-cells = <2>;
+ 		#clock-cells = <1>;
+diff --git a/arch/riscv/include/asm/arch-jh7100/gpio.h b/arch/riscv/include/asm/arch-jh7100/gpio.h
+new file mode 100644
+index 0000000000..908e2e5563
+--- /dev/null
++++ b/arch/riscv/include/asm/arch-jh7100/gpio.h
+@@ -0,0 +1,38 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * Copyright (C) 2020-2021 SiFive, Inc.
++ */
++
++#ifndef _GPIO_SIFIVE_H
++#define _GPIO_SIFIVE_H
++
++#define GPIO_INPUT_VAL	0x00
++#define GPIO_INPUT_EN	0x04
++#define GPIO_OUTPUT_EN	0x08
++#define GPIO_OUTPUT_VAL	0x0C
++#define GPIO_RISE_IE	0x18
++#define GPIO_RISE_IP	0x1C
++#define GPIO_FALL_IE	0x20
++#define GPIO_FALL_IP	0x24
++#define GPIO_HIGH_IE	0x28
++#define GPIO_HIGH_IP	0x2C
++#define GPIO_LOW_IE	0x30
++#define GPIO_LOW_IP	0x34
++#define GPIO_OUTPUT_XOR	0x40
++
++#define NR_GPIOS	16
++
++enum gpio_state {
++	LOW,
++	HIGH
++};
++
++/* Details about a GPIO bank */
++struct sifive_gpio_plat {
++	void *base;     /* address of registers in physical memory */
++};
++
++#define SIFIVE_GENERIC_GPIO_NR(port, index) \
++		(((port) * NR_GPIOS) + ((index) & (NR_GPIOS - 1)))
++
++#endif /* _GPIO_SIFIVE_H */
+diff --git a/arch/riscv/include/asm/arch-jh7100/spl.h b/arch/riscv/include/asm/arch-jh7100/spl.h
+new file mode 100644
+index 0000000000..15ad9e7c8b
+--- /dev/null
++++ b/arch/riscv/include/asm/arch-jh7100/spl.h
+@@ -0,0 +1,14 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * Copyright (C) 2020-2021 SiFive, Inc.
++ *
++ * Authors:
++ *   Pragnesh Patel <pragnesh.patel@sifve.com>
++ */
++
++#ifndef _SPL_SIFIVE_H
++#define _SPL_SIFIVE_H
++
++int spl_soc_init(void);
++
++#endif /* _SPL_SIFIVE_H */
+diff --git a/board/starfive/jh7100/Kconfig b/board/starfive/jh7100/Kconfig
+index d1e9eadbcf..33f3f389de 100644
+--- a/board/starfive/jh7100/Kconfig
++++ b/board/starfive/jh7100/Kconfig
+@@ -27,14 +27,16 @@ config SYS_TEXT_BASE
+ 	default 0x80200000 if RISCV_SMODE
+ 
+ config SPL_TEXT_BASE
+-	default 0x08000000
++	default 0x90000000
+ 
+ config SPL_OPENSBI_LOAD_ADDR
+ 	default 0x80000000
+ 
+ config BOARD_SPECIFIC_OPTIONS # dummy
+ 	def_bool y
++	select SUPPORT_SPL
+ 	select SIFIVE_FU740
++	select BINMAN
+ 	imply CMD_DHCP
+ 	imply CMD_EXT2
+ 	imply CMD_EXT4
+diff --git a/board/starfive/jh7100/Makefile b/board/starfive/jh7100/Makefile
+index a680399574..82a5d4321f 100644
+--- a/board/starfive/jh7100/Makefile
++++ b/board/starfive/jh7100/Makefile
+@@ -3,5 +3,6 @@
+ # Copyright (C) 2021 Shanghai StarFive Technology Co., Ltd.
+ # Micheal Zhu <michael.zhu@starfivetech.com>
+ 
++obj-$(CONFIG_SPL_BUILD)	+= spl.o
+ obj-y	+= jh7100.o
+ obj-y	+= jh_ptc.o
+diff --git a/board/starfive/jh7100/spl.c b/board/starfive/jh7100/spl.c
+new file mode 100644
+index 0000000000..e1d6fa6cec
+--- /dev/null
++++ b/board/starfive/jh7100/spl.c
+@@ -0,0 +1,40 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (c) 2020-2021 SiFive, Inc
++ *
++ * Authors:
++ *   Pragnesh Patel <pragnesh.patel@sifive.com>
++ */
++
++#include <init.h>
++#include <spl.h>
++#include <misc.h>
++#include <log.h>
++#include <linux/delay.h>
++#include <linux/io.h>
++#include <asm/gpio.h>
++#include <asm/arch/gpio.h>
++#include <asm/arch/spl.h>
++
++int spl_board_init_f(void)
++{
++	int ret = 0;
++
++	debug("%s\n", __func__);
++	board_hw_init();
++
++	return ret;
++}
++
++u32 spl_boot_device(void)
++{
++	return BOOT_DEVICE_MMC1;
++}
++
++#ifdef CONFIG_SPL_LOAD_FIT
++int board_fit_config_name_match(const char *name)
++{
++	/* boot using first FIT config */
++	return 0;
++}
++#endif
+diff --git a/configs/starfive_jh7100_starlight_smode_defconfig b/configs/starfive_jh7100_starlight_smode_defconfig
+index 68284497f7..9215e7cdd9 100644
+--- a/configs/starfive_jh7100_starlight_smode_defconfig
++++ b/configs/starfive_jh7100_starlight_smode_defconfig
+@@ -1,6 +1,11 @@
+ CONFIG_RISCV=y
++CONFIG_SPL_GPIO=y
+ CONFIG_SYS_MALLOC_F_LEN=0x3000
+ CONFIG_NR_DRAM_BANKS=1
++CONFIG_SPL_DM_SPI=y
++CONFIG_SPL_MMC=y
++CONFIG_SPL=y
++CONFIG_SPL_SPI_SUPPORT=y
+ CONFIG_SYS_MEMTEST_START=0x80000000
+ CONFIG_SYS_MEMTEST_END=0x200000000
+ CONFIG_ENV_SIZE=0x1f000
+@@ -23,6 +28,7 @@ CONFIG_SYS_BOOT_GET_CMDLINE=y
+ CONFIG_SYS_BOOT_GET_KBD=y
+ CONFIG_SYS_LOAD_ADDR=0x80200000
+ CONFIG_FIT=y
++CONFIG_SPL_LOAD_FIT_ADDRESS=0x84000000
+ CONFIG_CHROMEOS=y
+ CONFIG_SHOW_BOOT_PROGRESS=y
+ CONFIG_QSPI_BOOT=y
+@@ -41,6 +47,16 @@ CONFIG_LOG_MAX_LEVEL=5
+ CONFIG_LOG_ERROR_RETURN=y
+ CONFIG_DISPLAY_CPUINFO=y
+ CONFIG_DISPLAY_BOARDINFO=y
++CONFIG_SPL_SEPARATE_BSS=y
++CONFIG_SPL_DM_RESET=y
++CONFIG_DM_RESET=y
++CONFIG_SPL_YMODEM_SUPPORT=y
++CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_SECTOR=y
++CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_SECTOR=0x800
++CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_DATA_PART_OFFSET=0x0
++CONFIG_SPL_CACHE_SUPPORT=y
++CONFIG_SPL_CACHE=y
++CONFIG_BINMAN_FDT=n
+ CONFIG_MISC_INIT_R=y
+ CONFIG_SYS_PROMPT="Starlight #"
+ CONFIG_CMD_CONFIG=y
+diff --git a/drivers/mmc/starfive_jh_dw_mmc.c b/drivers/mmc/starfive_jh_dw_mmc.c
+index d8f57e4fc5..bc46ebe1e6 100644
+--- a/drivers/mmc/starfive_jh_dw_mmc.c
++++ b/drivers/mmc/starfive_jh_dw_mmc.c
+@@ -83,7 +83,7 @@ int starfive_jh_dwmmc_getcd(struct udevice *dev)
+ 	struct dwmci_host *host = &priv->host;
+ 
+ 	u32 ret = dwmci_readl(host, DWMCI_CDETECT);
+-#if CONFIG_IS_ENABLED(TARGET_STARFIVE_JH7100)
++#ifdef CONFIG_TARGET_STARFIVE_JH7100
+ 	printf("MMC CD is 0x%x, force to True.\n", ret);
+ 	return 1;
+ #else
+diff --git a/drivers/serial/Kconfig b/drivers/serial/Kconfig
+index 0fa5af964e..19ff64dbb8 100644
+--- a/drivers/serial/Kconfig
++++ b/drivers/serial/Kconfig
+@@ -399,6 +399,14 @@ config DEBUG_UART_SIFIVE
+ 	  will need to provide parameters to make this work. The driver will
+ 	  be available until the real driver-model serial is running.
+ 
++config DEBUG_UART_STARFIVE
++	bool "StarFive UART"
++	depends on STARFIVE_SERIAL
++	help
++	  Select this to enable a debug UART using the serial_sifive driver. You
++	  will need to provide parameters to make this work. The driver will
++	  be available until the real driver-model serial is running.
++
+ config DEBUG_UART_STM32
+ 	bool "STMicroelectronics STM32"
+ 	depends on STM32_SERIAL
+diff --git a/include/configs/starfive-jh7100.h b/include/configs/starfive-jh7100.h
+index 3f8391d9ad..043b61da7a 100644
+--- a/include/configs/starfive-jh7100.h
++++ b/include/configs/starfive-jh7100.h
+@@ -31,6 +31,20 @@
+  */
+ #define CONFIG_SYS_MAXARGS		16
+ 
++#ifdef CONFIG_SPL
++
++#define CONFIG_SPL_MAX_SIZE		0x00100000
++#define CONFIG_SPL_BSS_START_ADDR	(CONFIG_SPL_TEXT_BASE + 0x5000000)
++#define CONFIG_SPL_BSS_MAX_SIZE		0x00100000
++#define CONFIG_SYS_SPL_MALLOC_START	(CONFIG_SPL_BSS_START_ADDR + \
++					 CONFIG_SPL_BSS_MAX_SIZE)
++#define CONFIG_SYS_SPL_MALLOC_SIZE	0x00400000
++
++#define CONFIG_SPL_STACK		(CONFIG_SPL_TEXT_BASE + 0x001D0000 - \
++						GENERATED_GBL_DATA_SIZE)
++
++#endif
++
+ #define CONFIG_SYS_SDRAM_BASE		0x80000000
+ /* Init Stack Pointer */
+ #define CONFIG_SYS_INIT_SP_ADDR		(CONFIG_SYS_SDRAM_BASE + SZ_2M)
+-- 
+2.32.0
+

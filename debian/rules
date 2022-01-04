@@ -1,0 +1,25 @@
+#!/usr/bin/make -f
+
+ifeq (,$(filter terse,$(DEB_BUILD_OPTIONS)))
+VERBOSE=1
+else
+VERBOSE=0
+endif
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	OPENSBI=/usr/lib/riscv64-linux-gnu/opensbi/generic/fw_dynamic.bin \
+	CROSS_COMPILE=riscv64-linux-gnu- \
+	make V=$(VERBOSE)
+
+override_dh_auto_clean:
+	make mrproper
+
+override_dh_auto_configure:
+	make starfive_beaglev_defconfig
+
+override_dh_auto_test:
+
+override_dh_strip:

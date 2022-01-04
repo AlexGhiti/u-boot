@@ -1,0 +1,6 @@
+u-boot.bin /usr/lib/u-boot/starfive_beaglev
+u-boot /usr/lib/u-boot/starfive_beaglev
+spl/u-boot-spl.bin /usr/lib/u-boot/starfive_beaglev
+spl/u-boot-spl-dtb.bin.out /usr/lib/u-boot/starfive_beaglev
+u-boot.itb /usr/lib/u-boot/starfive_beaglev
+
