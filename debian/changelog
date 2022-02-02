@@ -1,3 +1,10 @@
+u-boot-starfive (2022.01-rc4-g0c08d33-0ubuntu1) jammy; urgency=medium
+
+  * d/patches: VisionFive support
+  * d: Build and install visionfive and beaglev
+
+ -- Alexandre Ghiti <alexandre.ghiti@canonical.com>  Wed, 02 Feb 2022 09:58:20 +0100
+
 u-boot-starfive (2021.10-starlight-ge77cc7b-0ubuntu1) jammy; urgency=medium
 
   * Initial support for StarFive BeagleV board:
