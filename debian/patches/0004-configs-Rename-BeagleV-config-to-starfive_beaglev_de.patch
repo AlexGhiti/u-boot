@@ -14,9 +14,6 @@ Signed-off-by: Alexandre Ghiti <alexandre.ghiti@canonical.com>
  1 file changed, 174 insertions(+)
  create mode 100644 configs/starfive_beaglev_defconfig
 
-diff --git a/configs/starfive_beaglev_defconfig b/configs/starfive_beaglev_defconfig
-new file mode 100644
-index 0000000000..9215e7cdd9
 --- /dev/null
 +++ b/configs/starfive_beaglev_defconfig
 @@ -0,0 +1,174 @@
@@ -194,6 +191,3 @@ index 0000000000..9215e7cdd9
 +CONFIG_ERRNO_STR=y
 +# CONFIG_GENERATE_SMBIOS_TABLE is not set
 +CONFIG_UNIT_TEST=y
--- 
-2.32.0
-

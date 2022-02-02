@@ -1,6 +1,13 @@
-u-boot.bin /usr/lib/u-boot/starfive_beaglev
-u-boot /usr/lib/u-boot/starfive_beaglev
-spl/u-boot-spl.bin /usr/lib/u-boot/starfive_beaglev
-spl/u-boot-spl-dtb.bin.out /usr/lib/u-boot/starfive_beaglev
-u-boot.itb /usr/lib/u-boot/starfive_beaglev
+# BeagleV
+build_beaglev/u-boot.bin /usr/lib/u-boot/starfive_beaglev
+build_beaglev/u-boot /usr/lib/u-boot/starfive_beaglev
+build_beaglev/spl/u-boot-spl.bin /usr/lib/u-boot/starfive_beaglev
+build_beaglev/spl/u-boot-spl-dtb.bin.out /usr/lib/u-boot/starfive_beaglev
+build_beaglev/u-boot.itb /usr/lib/u-boot/starfive_beaglev
 
+# VisionFive
+build_visionfive/u-boot.bin /usr/lib/u-boot/starfive_visionfive
+build_visionfive/u-boot /usr/lib/u-boot/starfive_visionfive
+build_visionfive/spl/u-boot-spl.bin /usr/lib/u-boot/starfive_visionfive
+build_visionfive/spl/u-boot-spl-dtb.bin.out /usr/lib/u-boot/starfive_visionfive
+build_visionfive/u-boot.itb /usr/lib/u-boot/starfive_visionfive

@@ -9,16 +9,25 @@ endif
 %:
 	dh $@
 
-override_dh_auto_build:
+dpkg-gencontrol_args += "-Vu-boot-starfive:Built-Using=$(shell dpkg-query -Wf \
+    '$${source:Package} (= $${source:Version})' opensbi)"
+
+u-boot-starfive-beaglev:
+	make starfive_beaglev_defconfig O=build_beaglev
 	OPENSBI=/usr/lib/riscv64-linux-gnu/opensbi/generic/fw_dynamic.bin \
 	CROSS_COMPILE=riscv64-linux-gnu- \
-	make V=$(VERBOSE)
+	make O=build_beaglev V=$(VERBOSE)
+
+u-boot-starfive-visionfive:
+	make starfive_jh7100_visionfive_smode_defconfig O=build_visionfive
+	OPENSBI=/usr/lib/riscv64-linux-gnu/opensbi/generic/fw_dynamic.bin \
+	CROSS_COMPILE=riscv64-linux-gnu- \
+	make O=build_visionfive V=$(VERBOSE)
+
+override_dh_auto_build: u-boot-starfive-beaglev u-boot-starfive-visionfive
 
 override_dh_auto_clean:
 	make mrproper
-
-override_dh_auto_configure:
-	make starfive_beaglev_defconfig
 
 override_dh_auto_test:
 

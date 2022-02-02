@@ -3,3 +3,7 @@
 0003-include-configs-Use-SiFive-Unmatched-board-ennvironm.patch
 0004-configs-Rename-BeagleV-config-to-starfive_beaglev_de.patch
 0005-riscv-Add-target-to-create-SPL-binary-for-BeagleV.patch
+0006-Fix-build-failures-caused-by-ad-hoc-CONFIG.patch
+0007-Add-SPL-CONFIG-to-visionfive-defconfig.patch
+0008-configs-visionfive-Make-the-default-dtb-match.patch
+0009-disk-gpt-print-all-partitions.patch

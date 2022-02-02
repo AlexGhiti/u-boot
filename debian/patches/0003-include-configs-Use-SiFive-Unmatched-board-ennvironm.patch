@@ -1,7 +1,8 @@
-From bf09e5c97ca883565603f5e126b361e79476f23f Mon Sep 17 00:00:00 2001
+From a7f081ee842748b7dc52e264c9c2b54d78d8293e Mon Sep 17 00:00:00 2001
 From: Alexandre Ghiti <alexandre.ghiti@canonical.com>
 Date: Wed, 27 Oct 2021 14:46:34 +0200
-Subject: [PATCH 3/5] include: configs: Use SiFive Unmatched board ennvironment
+Subject: [PATCH] UBUNTU: include: configs: Use SiFive Unmatched board
+ ennvironment
 
 Use the SiFive Unmatched environment that we already use for the Ubuntu
 image we deliver on this board, it is then easier to maintain.
@@ -11,14 +12,12 @@ the /boot partition, it is easier to have everything in the config file.
 
 Signed-off-by: Alexandre Ghiti <alexandre.ghiti@canonical.com>
 ---
- include/configs/starfive-jh7100.h | 54 ++++++++++++++++++-------------
- 1 file changed, 31 insertions(+), 23 deletions(-)
+ include/configs/starfive-jh7100.h | 55 +++++++++++++++++--------------
+ 1 file changed, 31 insertions(+), 24 deletions(-)
 
-diff --git a/include/configs/starfive-jh7100.h b/include/configs/starfive-jh7100.h
-index 51d45783b3..1d7c303914 100644
 --- a/include/configs/starfive-jh7100.h
 +++ b/include/configs/starfive-jh7100.h
-@@ -68,32 +68,40 @@
+@@ -68,11 +68,15 @@
  
  #include <environment/distro/sf.h>
  
@@ -37,9 +36,15 @@ index 51d45783b3..1d7c303914 100644
 +	"name=loader2,size=4MB,type=${type_guid_gpt_loader2};" \
 +	"name=system,size=-,bootable,type=${type_guid_gpt_system};"
  
+ #define STARLIGHT_TEST_BOOTENV \
+ 	"testpart=0:1\0" \
+@@ -83,26 +87,29 @@
+ 		"env import -t ${loadaddr} ${filesize}\0"
+ 
  #define CONFIG_EXTRA_ENV_SETTINGS \
 -	STARLIGHT_FEDORA_BOOTENV \
 -	"loadaddr=0xa0000000\0" \
+-	STARLIGHT_TEST_BOOTENV \
 -	"loadbootenv=fatload mmc ${mmcdev} ${loadaddr} ${bootenv}\0" \
 -	"ext4bootenv=ext4load mmc ${bootpart} ${loadaddr} ${bootdir}/${bootenv}\0" \
 -	"importbootenv=echo Importing environment from mmc${mmcdev} ...; " \
@@ -82,6 +87,3 @@ index 51d45783b3..1d7c303914 100644
  
  #define CONFIG_SYS_MAX_FLASH_SECT	0
  #define CONFIG_SYS_MAX_FLASH_BANKS	0
--- 
-2.32.0
-

@@ -1,0 +1,25 @@
+From fa42218899128cec0d3d564a8839d72e38c1414f Mon Sep 17 00:00:00 2001
+From: Alexandre Ghiti <alexandre.ghiti@canonical.com>
+Date: Wed, 2 Feb 2022 09:23:31 +0100
+Subject: [PATCH] UBUNTU: configs: visionfive: Make the default dtb match the
+ kernel dtb name
+
+The kernel dtb contains important information that are not present in
+the u-boot dtb (i.e.: uncached-offset).
+
+Signed-off-by: Alexandre Ghiti <alexandre.ghiti@canonical.com>
+---
+ configs/starfive_jh7100_visionfive_smode_defconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/configs/starfive_jh7100_visionfive_smode_defconfig
++++ b/configs/starfive_jh7100_visionfive_smode_defconfig
+@@ -37,7 +37,7 @@
+ # CONFIG_USE_BOOTCOMMAND is not set
+ CONFIG_USE_PREBOOT=y
+ CONFIG_PREBOOT="run mmcbootenv"
+-CONFIG_DEFAULT_FDT_FILE="starfive/jh7100-visionfive.dtb"
++CONFIG_DEFAULT_FDT_FILE="starfive/jh7100-starfive-visionfive-v1.dtb"
+ CONFIG_CONSOLE_RECORD=y
+ CONFIG_LOG_MAX_LEVEL=5
+ CONFIG_LOG_ERROR_RETURN=y

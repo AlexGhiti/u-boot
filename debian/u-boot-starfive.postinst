@@ -10,6 +10,9 @@ case "$1" in
         if grep -q '^BeagleV Starlight Beta' /sys/firmware/devicetree/base/model; then
             target="starfive_beaglev"
         fi
+        if grep -q '^StarFive VisionFive V1' /sys/firmware/devicetree/base/model; then
+            target="starfive_visionfive"
+        fi
         if [ -n "$target" ] && [ -e /dev/disk/by-partlabel/loader2 ]; then
             dd if=/usr/lib/u-boot/$target/u-boot.itb of=/dev/disk/by-partlabel/loader2
         fi

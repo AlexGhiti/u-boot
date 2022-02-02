@@ -13,11 +13,9 @@ Signed-off-by: Alexandre Ghiti <alexandre.ghiti@canonical.com>
  arch/riscv/config.mk | 10 ++++++++++
  1 file changed, 10 insertions(+)
 
-diff --git a/arch/riscv/config.mk b/arch/riscv/config.mk
-index 1ebce5bd67..62c51f5043 100644
 --- a/arch/riscv/config.mk
 +++ b/arch/riscv/config.mk
-@@ -32,3 +32,13 @@ LDFLAGS_u-boot		+= --gc-sections -static -pie
+@@ -32,3 +32,13 @@
  
  EFI_CRT0		:= crt0_riscv_efi.o
  EFI_RELOC		:= reloc_riscv_efi.o
@@ -31,6 +29,3 @@ index 1ebce5bd67..62c51f5043 100644
 +
 +INPUTS-$(CONFIG_SPL_BUILD) += $(obj)/u-boot-spl-dtb.bin.out
 +endif
--- 
-2.32.0
-
