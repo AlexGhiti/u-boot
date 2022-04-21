@@ -1,0 +1,28 @@
+From 29f254c5dcae977244fc6f27f7c2ee277c7c8803 Mon Sep 17 00:00:00 2001
+From: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+Date: Wed, 15 Dec 2021 18:28:11 +0100
+Subject: [PATCH 1/1] riscv: fdtfile value for Nezha D1
+
+Provide the value 'allwinner/sun20i-d1-nezha.dtb' for fdtfile.
+This matches the Linux filename of the devicetree.
+
+Signed-off-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+---
+ include/configs/sun20i.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/configs/sun20i.h b/include/configs/sun20i.h
+index 640e740810..dc75cd3ffc 100644
+--- a/include/configs/sun20i.h
++++ b/include/configs/sun20i.h
+@@ -30,6 +30,7 @@
+ #define MEM_LAYOUT_ENV_SETTINGS \
+ 	"bootm_size=" BOOTM_SIZE "\0" \
+ 	"fdt_addr_r=" FDT_ADDR_R "\0" \
++	"fdtfile=allwinner/sun20i-d1-nezha.dtb\0" \
+ 	"fdtoverlay_addr_r=" FDTOVERLAY_ADDR_R "\0" \
+ 	"kernel_addr_r=" KERNEL_ADDR_R "\0" \
+ 	"kernel_comp_addr_r=" KERNEL_COMP_ADDR_R "\0" \
+-- 
+2.32.0
+

@@ -1,0 +1,40 @@
+From 86798ee0c148db248d8e3e9b6395bbe9e24d9149 Mon Sep 17 00:00:00 2001
+From: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+Date: Fri, 5 Nov 2021 19:34:31 +0100
+Subject: [PATCH] watchdog: don't autostart watchdog on Sunxi boards
+
+The Sunxi boards only support a 16 second watchdog timeout. This is too
+short to boot Linux. The UEFI specification requires 300 seconds as
+default timeout.
+
+Change the default for CONFIG_WATCHDOG_AUTOSTART for ARCH_SUNXI.
+
+Fixes: b147bd3607f8 ("sunxi: Enable watchdog timer support by default")
+Signed-off-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+Tested-by: Andre Przywara <andre.przywara@arm.com>
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+
+Add TARGET_SUNXI used for Nezha board
+
+Signed-off-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+
+Last-update: 2022-01-22
+---
+ drivers/watchdog/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+index d306054a8c..1177f17fd8 100644
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -12,6 +12,7 @@ config WATCHDOG
+ config WATCHDOG_AUTOSTART
+ 	bool "Automatically start watchdog timer"
+ 	depends on WDT
++	default n if (ARCH_SUNXI || TARGET_SUNXI)
+ 	default y
+ 	help
+ 	  Automatically start watchdog timer and start servicing it during
+-- 
+2.33.1
+

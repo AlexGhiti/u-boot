@@ -1,0 +1,25 @@
+Add command nvedit and efidebug to Nezha defconfig
+
+Author: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+Forwarded: no
+Last-Update: 2022-01-11
+
+Patch-Name: 0001-add-efi-commands.patch
+--- a/configs/nezha_defconfig
++++ b/configs/nezha_defconfig
+@@ -5,6 +5,7 @@
+ CONFIG_RISCV_SMODE=y
+ # CONFIG_SPL_SMP is not set
+ CONFIG_SYS_LOAD_ADDR=0x4a000000
++CONFIG_CMD_NVEDIT_EFI=y
+ CONFIG_CMD_CLK=y
+ CONFIG_CMD_GPIO=y
+ CONFIG_CMD_I2C=y
+@@ -12,6 +13,7 @@
+ CONFIG_CMD_MTD=y
+ CONFIG_CMD_SPI=y
+ CONFIG_CMD_WDT=y
++CONFIG_CMD_EFIDEBUG=y
+ CONFIG_CMD_TIMER=y
+ CONFIG_CMD_REGULATOR=y
+ CONFIG_CMD_UBI=y

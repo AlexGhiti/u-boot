@@ -1,0 +1,8 @@
+u-boot-nezha (2021.09+git20211008.62392d3-0ubuntu1) jammy; urgency=medium
+
+  * Provide U-Boot for Nezha D1 board (LP: #1954772)
+    Currently the board is not upstreamed and there are siginificant
+    differences to upstream U-Boot. Therefore temporarily use a
+    separate source package (git tag: nezha-u-boot-20210911).
+
+ -- Heinrich Schuchardt <heinrich.schuchardt@canonical.com>  Fri, 14 Jan 2022 18:39:30 +0100
