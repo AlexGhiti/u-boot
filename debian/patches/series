@@ -1,6 +1,5 @@
 0002-riscv-add-clint-has-no-64bit-mmio-to-Nehza-DT.patch
 0001-provide-toc1-cfg.patch
 0001-add-efi-commands.patch
-0001-riscv-fdtfile-value-for-Nezha-D1.patch
 0001-disk-gpt-print-all-partitions.patch
 0001-watchdog-don-t-autostart-watchdog-on-Sunxi-boards.patch
