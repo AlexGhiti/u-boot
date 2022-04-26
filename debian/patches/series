@@ -3,3 +3,4 @@
 0001-add-efi-commands.patch
 0003-watchdog-Disable-watchdog-by-default.patch
 0004-configs-sunxi-Make-RISC-V-boards-use-ARM64-fdt-initr.patch
+0005-board-configs-nezha-Fixup-kernel-dtb-with-the-memory.patch

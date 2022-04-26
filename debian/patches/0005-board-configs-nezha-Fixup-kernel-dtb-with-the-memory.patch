@@ -1,0 +1,54 @@
+From a18a9d90ce435e544e5368b2f825ba7d8639f987 Mon Sep 17 00:00:00 2001
+From: Alexandre Ghiti <alexandre.ghiti@canonical.com>
+Date: Tue, 26 Apr 2022 16:06:21 +0200
+Subject: [PATCH] board, configs: nezha: Fixup kernel dtb with the memory node
+
+boot0 detects RAM size at runtime and patches u-boot's dtb: u-boot
+must patch the kernel's dtb too.
+
+Signed-off-by: Alexandre Ghiti <alexandre.ghiti@canonical.com>
+---
+ board/sunxi/board-riscv.c | 17 +++++++++++++++++
+ configs/nezha_defconfig   |  1 +
+ 2 files changed, 18 insertions(+)
+
+diff --git a/board/sunxi/board-riscv.c b/board/sunxi/board-riscv.c
+index 3dccd5c40f..5a87266c76 100644
+--- a/board/sunxi/board-riscv.c
++++ b/board/sunxi/board-riscv.c
+@@ -17,6 +17,23 @@ int board_init(void)
+ 	return cpu_probe_all();
+ }
+ 
++int ft_board_setup(void *blob, struct bd_info *bd)
++{
++	phys_addr_t base;
++	phys_size_t size;
++
++	/*
++	 * boot0 detects RAM size at runtime so we need to pass this info to
++	 * the kernel dtb (which can be different from the u-boot one).
++	 */
++	base = gd->ram_base;
++	size = gd->ram_size;
++
++	fdt_fixup_memory(blob, (u64)base, (u64)size);
++
++	return 0;
++}
++
+ uint32_t spl_boot_device(void)
+ {
+ 	return BOOT_DEVICE_MMC1;
+diff --git a/configs/nezha_defconfig b/configs/nezha_defconfig
+index c4652f9917..adad606de0 100644
+--- a/configs/nezha_defconfig
++++ b/configs/nezha_defconfig
+@@ -78,3 +78,4 @@ CONFIG_USB_FUNCTION_MASS_STORAGE=y
+ CONFIG_CC_OPTIMIZE_LIBS_FOR_SPEED=y
+ CONFIG_BZIP2=y
+ CONFIG_TEST_FDTDEC=y
++CONFIG_OF_BOARD_SETUP=y
+-- 
+2.32.0
+
