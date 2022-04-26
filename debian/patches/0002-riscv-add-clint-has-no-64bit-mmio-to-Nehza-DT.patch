@@ -11,11 +11,9 @@ Signed-off-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
  arch/riscv/dts/sun20i-d1.dtsi | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/riscv/dts/sun20i-d1.dtsi b/arch/riscv/dts/sun20i-d1.dtsi
-index 56d02c33b0..1bc5ae762e 100644
 --- a/arch/riscv/dts/sun20i-d1.dtsi
 +++ b/arch/riscv/dts/sun20i-d1.dtsi
-@@ -1151,6 +1151,7 @@
+@@ -1421,6 +1421,7 @@
  				     "sifive,clint0";
  			reg = <0x14000000 0xc000>;
  			reg-io-width = <4>;
@@ -23,6 +21,3 @@ index 56d02c33b0..1bc5ae762e 100644
  			interrupts-extended = <&cpu0_intc 3>,
  					      <&cpu0_intc 7>;
  		};
--- 
-2.32.0
-
