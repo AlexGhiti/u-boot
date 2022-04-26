@@ -1,0 +1,32 @@
+From 806b66fa4e5fc9a9cf712afa060dec665d07c413 Mon Sep 17 00:00:00 2001
+From: Alexandre Ghiti <alexandre.ghiti@canonical.com>
+Date: Tue, 26 Apr 2022 11:11:48 +0200
+Subject: [PATCH] configs: sunxi: Make RISC-V boards use ARM64
+ fdt/initrd/kernel loading addresses
+
+It seems that the current configuration tries to make u-boot work for
+very low DDR config (64MB) which is not a target for Ubuntu: so in order
+to make our large initrd/kernel work on reasonable configurations, use
+the arm64 definitions.
+
+Signed-off-by: Alexandre Ghiti <alexandre.ghiti@canonical.com>
+---
+ include/configs/sunxi-common.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/configs/sunxi-common.h b/include/configs/sunxi-common.h
+index 7fc0fe63f0..b3a94c6b2d 100644
+--- a/include/configs/sunxi-common.h
++++ b/include/configs/sunxi-common.h
+@@ -183,7 +183,7 @@
+ 
+ #ifndef CONFIG_SPL_BUILD
+ 
+-#ifdef CONFIG_ARM64
++#if defined(CONFIG_ARM64) || defined(CONFIG_RISCV)
+ /*
+  * Boards seem to come with at least 512MB of DRAM.
+  * The kernel should go at 512K, which is the default text offset (that will
+-- 
+2.32.0
+

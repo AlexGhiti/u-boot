@@ -2,3 +2,4 @@
 0001-provide-toc1-cfg.patch
 0001-add-efi-commands.patch
 0003-watchdog-Disable-watchdog-by-default.patch
+0004-configs-sunxi-Make-RISC-V-boards-use-ARM64-fdt-initr.patch
