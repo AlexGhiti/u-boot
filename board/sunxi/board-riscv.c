@@ -17,6 +17,23 @@ int board_init(void)
 	return cpu_probe_all();
 }
 
+int ft_board_setup(void *blob, struct bd_info *bd)
+{
+	phys_addr_t base;
+	phys_size_t size;
+
+	/*
+	 * boot0 detects RAM size at runtime so we need to pass this info to
+	 * the kernel dtb (which can be different from the u-boot one).
+	 */
+	base = gd->ram_base;
+	size = gd->ram_size;
+
+	fdt_fixup_memory(blob, (u64)base, (u64)size);
+
+	return 0;
+}
+
 uint32_t spl_boot_device(void)
 {
 	return BOOT_DEVICE_MMC1;
