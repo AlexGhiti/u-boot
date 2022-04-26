@@ -183,7 +183,7 @@
 
 #ifndef CONFIG_SPL_BUILD
 
-#ifdef CONFIG_ARM64
+#if defined(CONFIG_ARM64) || defined(CONFIG_RISCV)
 /*
  * Boards seem to come with at least 512MB of DRAM.
  * The kernel should go at 512K, which is the default text offset (that will
