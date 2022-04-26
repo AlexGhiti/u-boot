@@ -1,0 +1,30 @@
+From b66100796dc0be6fcffd014e50d153c41a0e6a92 Mon Sep 17 00:00:00 2001
+From: Alexandre Ghiti <alexandre.ghiti@canonical.com>
+Date: Tue, 26 Apr 2022 11:08:40 +0200
+Subject: [PATCH] watchdog: Disable watchdog by default
+
+It seems that at first fresh boot, the watchdog is not configured
+correctly and then the board reboot while loading the large Ubuntu
+initrd: so disable the watchdog for now.
+
+Signed-off-by: Alexandre Ghiti <alexandre.ghiti@canonical.com>
+---
+ drivers/watchdog/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+index 39cd098bcf..da69ea3b71 100644
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -292,7 +292,7 @@ config WDT_STM32MP
+ config WDT_SUNXI
+ 	bool "Allwinner sunxi watchdog timer support"
+ 	depends on WDT && (ARCH_SUNXI || TARGET_SUNXI)
+-	default y
++	default n
+ 	help
+ 	  Enable support for the watchdog timer in Allwinner sunxi SoCs.
+ 
+-- 
+2.32.0
+
