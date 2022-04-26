@@ -1,6 +1,16 @@
 u-boot-nezha (2022.04+git20220405.7446a472) jammy; urgency=medium
 
   * Bump version to 2022.04
+  * d/rules:
+    + Add 'Built-Using' field for openSBI
+  * d/postinst:
+    + Fix model string 'NeZha' -> 'Nezha'
+  * d/patches:
+    + Remove now useless patches
+    + Add patch that disables the watchdog as it results in a boot failure
+    + Add patch that uses arm64 loading addresses as we will limit Ubuntu
+      to devices with at least 1GB of RAM
+    + Add patch that fixup kernel dtb with the memory node added by boot0
 
  -- Alexandre Ghiti <alexandre.ghiti@canonical.com>  Thu, 21 Apr 2022 11:19:39 +0200
 
