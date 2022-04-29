@@ -1,0 +1,23 @@
+From 100ef2b974a6ae4830d10404f6f55319e3f599bb Mon Sep 17 00:00:00 2001
+From: Alexandre Ghiti <alexandre.ghiti@canonical.com>
+Date: Fri, 29 Apr 2022 11:02:05 +0200
+Subject: [PATCH 1/2] configs: Add CONFIG_OF_BOARD_PLATFORM as default for dtb
+ fixup
+
+Signed-off-by: Alexandre Ghiti <alexandre.ghiti@canonical.com>
+---
+ configs/lichee_rv_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/configs/lichee_rv_defconfig b/configs/lichee_rv_defconfig
+index ad41d2c5fa..adf0de7891 100644
+--- a/configs/lichee_rv_defconfig
++++ b/configs/lichee_rv_defconfig
+@@ -22,3 +22,4 @@ CONFIG_USB_MUSB_GADGET=y
+ CONFIG_USB_GADGET=y
+ CONFIG_USB_GADGET_DOWNLOAD=y
+ CONFIG_USB_FUNCTION_MASS_STORAGE=y
++CONFIG_OF_BOARD_SETUP=y
+-- 
+2.32.0
+
