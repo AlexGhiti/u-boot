@@ -6,7 +6,7 @@ set -e
 
 case "$1" in
     configure)
-        if grep -q '^Allwinner D1 NeZha$' /sys/firmware/devicetree/base/model && [ -e /dev/disk/by-partlabel/loader2 ]; then
+        if grep -q '^Allwinner D1 Nezha$' /sys/firmware/devicetree/base/model && [ -e /dev/disk/by-partlabel/loader2 ]; then
             dd if=/usr/lib/u-boot/nezha/u-boot.toc1 of=/dev/disk/by-partlabel/loader2 conv=fsync
         fi
         ;;
