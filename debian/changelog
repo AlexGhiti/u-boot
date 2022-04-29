@@ -1,4 +1,4 @@
-u-boot-licheerv (2022.04+git20220405.7446a472-0) jammy; urgency=medium
+u-boot-licheerv (2022.04+git20220405.7446a472-0~ppa0) jammy; urgency=medium
 
   * Initial version to 2022.04
   * d/patches:
