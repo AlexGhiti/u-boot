@@ -1,15 +1,15 @@
-The boot0 SPL used by the Nezha board expects to load a TOC1 image containing
+The boot0 SPL used by the LicheeRV board expects to load a TOC1 image containing
 OpenSBI, U-Boot, and a DTB from sector 32800. If loading fails, it tries
 to read a backup from sector 24576.
 
 To install to the first position use:
 
-    sudo dd if=/usr/lib/u-boot/nezha/u-boot.toc1 of=/dev/sdX bs=8192 seek=2050 \
+    sudo dd if=/usr/lib/u-boot/licheerv/u-boot.toc1 of=/dev/sdX bs=8192 seek=2050 \
             conv=fsync,notrunc
 
 To install to the backup position use:
 
-    sudo dd if=/usr/lib/u-boot/nezha/u-boot.toc1 of=/dev/sdX bs=8192 seek=1536 \
+    sudo dd if=/usr/lib/u-boot/licheerv/u-boot.toc1 of=/dev/sdX bs=8192 seek=1536 \
             conv=fsync,notrunc
 
 Also worth mentioning: currently this package is based on a forked version of

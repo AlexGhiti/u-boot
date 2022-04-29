@@ -1,24 +1,10 @@
-u-boot-nezha (2022.04+git20220405.7446a472) jammy; urgency=medium
+u-boot-licheerv (2022.04+git20220405.7446a472-0) jammy; urgency=medium
 
-  * Bump version to 2022.04
-  * d/rules:
-    + Add 'Built-Using' field for openSBI
-  * d/postinst:
-    + Fix model string 'NeZha' -> 'Nezha'
+  * Initial version to 2022.04
   * d/patches:
-    + Remove now useless patches
     + Add patch that disables the watchdog as it results in a boot failure
     + Add patch that uses arm64 loading addresses as we will limit Ubuntu
       to devices with at least 1GB of RAM
     + Add patch that fixup kernel dtb with the memory node added by boot0
 
  -- Alexandre Ghiti <alexandre.ghiti@canonical.com>  Thu, 21 Apr 2022 11:19:39 +0200
-
-u-boot-nezha (2021.09+git20211008.62392d3-0ubuntu1) jammy; urgency=medium
-
-  * Provide U-Boot for Nezha D1 board (LP: #1954772)
-    Currently the board is not upstreamed and there are siginificant
-    differences to upstream U-Boot. Therefore temporarily use a
-    separate source package (git tag: nezha-u-boot-20210911).
-
- -- Heinrich Schuchardt <heinrich.schuchardt@canonical.com>  Fri, 14 Jan 2022 18:39:30 +0100

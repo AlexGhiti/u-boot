@@ -9,7 +9,7 @@ endif
 %:
 	dh $@
 
-dpkg-gencontrol_args += "-Vu-boot-nezha:Built-Using=$(shell dpkg-query -Wf \
+dpkg-gencontrol_args += "-Vu-boot-licheerv:Built-Using=$(shell dpkg-query -Wf \
     '$${source:Package} (= $${source:Version})' opensbi)"
 
 override_dh_gencontrol:
@@ -25,7 +25,7 @@ override_dh_auto_clean:
 	make mrproper
 
 override_dh_auto_configure:
-	make nezha_defconfig
+	make lichee_rv_defconfig
 
 override_dh_auto_test:
 
