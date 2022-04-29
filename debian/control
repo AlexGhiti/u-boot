@@ -24,6 +24,7 @@ Rules-Requires-Root: no
 Package: u-boot-nezha
 Architecture: all
 Multi-Arch: foreign
+Built-Using: ${u-boot-nezha:Built-Using}
 Recommends: nezha-boot0
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: U-Boot for Allwinner Nezha board

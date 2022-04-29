@@ -9,6 +9,12 @@ endif
 %:
 	dh $@
 
+dpkg-gencontrol_args += "-Vu-boot-nezha:Built-Using=$(shell dpkg-query -Wf \
+    '$${source:Package} (= $${source:Version})' opensbi)"
+
+override_dh_gencontrol:
+	dh_gencontrol -- $(dpkg-gencontrol_args)
+
 override_dh_auto_build:
 	OPENSBI=/usr/lib/riscv64-linux-gnu/opensbi/generic/fw_dynamic.bin \
 	CROSS_COMPILE=riscv64-linux-gnu- \
